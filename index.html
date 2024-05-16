@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Webpage Design</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">ECOFLOW</h2>
+            </div>
+
+        </div> 
+        <div class="content">
+            <h1>Smart <br><span>Irrigation</span> <br>System</h1>
+            <p class="par"><br>-Calculates Humidity, Moisture and Temperature<br>-Created by Rahul Robby<br></p>
+            <div class="form">
+                <h2>Login Here</h2>
+                <input type="email" id="email" placeholder="Enter Email Here">
+                <input type="password" id="password" placeholder="Enter Password Here">
+                <button class="btnn" onclick="login()">Login</button>
+                <button type="button" class="btnn1" onclick="window.location.href='index1.html';">Sign Up</button>
+            </div>
+        </div>
+    </div>
+    <!-- Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-auth.js"></script>
+
+    <!-- Adding jQuery and Popper.js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+    <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+      apiKey: "AIzaSyDS7bVOadY5jm0jEmip7lyX3X-icVHk_cc",
+      authDomain: "my-project-50bd1.firebaseapp.com",
+      projectId: "my-project-50bd1",
+      storageBucket: "my-project-50bd1.appspot.com",
+      messagingSenderId: "350307466975",
+      appId: "1:350307466975:web:71885d4e5b6604cb7ff36a",
+      measurementId: "G-NWDKSB73V6"
+    };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    
+        // Get Elements
+        const emailField = document.getElementById("email");
+        const passwordField = document.getElementById("password");
+        const btnLogin = document.querySelector(".btnn");
+    
+        // Function to validate email format
+        function validateEmail(email) {
+            const expression = /^[^@]+@\w+(\.\w+)+\w$/;
+            return expression.test(email);
+        }
+    
+        // Function to validate password length
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+    
+        // Function to handle login
+        function login() {
+            const email = emailField.value;
+            const password = passwordField.value;
+    
+            if (!validateEmail(email) || !validatePassword(password)) {
+                alert('Email or Password is not correct');
+                return;
+            }
+    
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Login successful
+                    window.location.href = "view2.html"; // Redirect to view.html
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                });
+        }
+    
+        // Attach login function to the login button click event
+        btnLogin.addEventListener("click", login);
+    </script>
+</body>
+</html>

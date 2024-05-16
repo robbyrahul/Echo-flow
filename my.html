@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Home App - Neomorphism Design</title>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900'>
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div id="sha_app" class="row">
+            <!-- Start Section Header Bar -->
+            <section id="sha_header_bar" class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                    </div>
+                    <div class="col-12">
+                        <span class="heading">Eco Flow</span>
+                    </div>
+                    <div class="menu-btn" id="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <nav class="navbar" id="navbar">
+                        <div class="max-width">
+                            <div class="logo"><a href="#"></a></div>
+                            <ul class="menu">
+                                <li><a href="home.html" class="menu-btn">Home</a></li>
+                                <li><a href="my.html" class="menu-btn">Project 1</a></li>
+                                <li><a href="my2.html" class="menu-btn">Project 2</a></li>
+
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </section>
+            <!-- End Section Header Bar -->
+
+            <!-- Start Section Body 1 -->
+            <section id="sha_temp_body" class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <span class="sha_temp">
+                            <span>
+                                <span class="temp-data" id="temperature-data">0°C</span>
+                                <span class="temp-info">
+                                    <i class="fa fa-snowflake-o"></i> Temperature
+                                </span>
+                            </span>
+                        </span>
+                        <span class="sha_temp">
+                            <span>
+                                <span class="temp-data" id="humidity-data">0%</span>
+                                <span class="temp-info">
+                                    <i class="fa fa-snowflake-o"></i> Humidity
+                                </span>
+                            </span>
+                        </span>
+                        <span class="sha_temp">
+                            <span>
+                                <span class="temp-data" id="moisture-data">0%</span>
+                                <span class="temp-info">
+                                    <i class="fa fa-snowflake-o"></i> Moisture
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </section>
+            <!-- End Section Body 1 -->
+
+            <!-- Start Section Body 2 -->
+            <section id="sha_temp_meta" class="col-12">
+                <div class="row">
+                    <div class="col-12 sha_tile">
+                        <div>
+                            <h3>Threshold: <span id="threshold-display">0</span></h3>
+                            <form>
+                                <label for="threshold">Adjust Threshold:</label>
+                                <input id="threshold" type="range" min="0" max="100" step="1" value="0"
+                                    oninput="showVal(this.value)" onchange="showVal(this.value)">
+                                <button type="submit" id="submit-button">Submit</button>
+                            </form>
+                            <div>
+                                <button id="turn-on-button">Turn On</button>
+                                <button id="turn-off-button">Turn Off</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End Section Body 2 -->
+
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPLfVqrSL3KOingphunCOkO7Necw1J-6Q",
+            authDomain: "eco-flow-ebdb1.firebaseapp.com",
+            databaseURL: "https://eco-flow-ebdb1-default-rtdb.firebaseio.com",
+            projectId: "eco-flow-ebdb1",
+            storageBucket: "eco-flow-ebdb1.appspot.com",
+            messagingSenderId: "542838819854",
+            appId: "1:542838819854:web:37e4c4588691099756c05f"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        // Reference to the Firebase database
+        const db = firebase.database();
+
+        // Fetch data and update the UI
+        function fetchData() {
+            // Fetch and display temperature data
+            db.ref('temperature').on('value', function(snapshot) {
+                const temperature = snapshot.val();
+                document.getElementById('temperature-data').textContent = `${temperature}°C`;
+            });
+
+            // Fetch and display humidity data
+            db.ref('humidity').on('value', function(snapshot) {
+                const humidity = snapshot.val();
+                document.getElementById('humidity-data').textContent = `${humidity}%`;
+            });
+
+            // Fetch and display moisture data
+            db.ref('moisture/moisture1').on('value', function(snapshot) {
+                const moisture = snapshot.val();
+                document.getElementById('moisture-data').textContent = `${moisture}%`;
+            });
+        }
+
+        // Function to handle threshold value changes
+        function showVal(temp) {
+            document.getElementById('threshold-display').textContent = temp;
+        }
+
+        // Function to toggle navbar visibility
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const navbar = document.getElementById('navbar');
+            navbar.style.display = (navbar.style.display === 'none' || navbar.style.display === '') ? 'block' : 'none';
+        });
+
+        // Function to handle manual pump control
+        document.getElementById('submit-button').addEventListener('click', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Get the value from the input element
+            const inputValue = document.getElementById('threshold').value;
+
+            // Convert the value to an integer
+            const thresholdValue = parseInt(inputValue, 10);
+
+            // Check if the parsed value is a valid integer
+            if (!isNaN(thresholdValue) && Number.isInteger(thresholdValue)) {
+                // Update the threshold value in the Firebase database
+                db.ref('threshold0').set(thresholdValue)
+                    .then(() => {
+                        // Show a popup message to confirm the update
+                        alert(`Threshold value ${thresholdValue} updated successfully in Firebase.`);
+                    })
+                    .catch(error => {
+                        console.error('Error updating threshold in Firebase:', error);
+                    });
+            } else {
+                console.error('Invalid input: Threshold value must be an integer.');
+            }
+        });
+
+        // Fetch data initially
+        fetchData();
+        document.getElementById('turn-on-button').addEventListener('click', function(event) {
+            // Prevent the default button behavior
+            event.preventDefault();
+            // Update the status in the Firebase database
+            db.ref('status').set('on')
+                .then(() => {
+                    alert('Device turned on successfully.');
+                })
+                .catch(error => {
+                    console.error('Error turning on device:', error);
+                });
+        });
+        
+        // Function to handle turning off
+        document.getElementById('turn-off-button').addEventListener('click', function(event) {
+            // Prevent the default button behavior
+            event.preventDefault();
+            // Update the status in the Firebase database
+            db.ref('status').set('off')
+                .then(() => {
+                    alert('Device turned off successfully.');
+                })
+                .catch(error => {
+                    console.error('Error turning off device:', error);
+                });
+        });
+    </script>
+
+    <!-- Add CSS styling for the Plant 2 link -->
+    <style>
+        /* Add some styling for the Plant 2 link */
+        .plant2-link {
+            color: #333; /* Set link color */
+            font-weight: bold; /* Set font weight */
+            text-decoration: none; /* Remove underline from link */
+            cursor: pointer; /* Change cursor to pointer */
+            margin: 10px; /* Add margin */
+        }
+
+        /* Add hover effect to the link */
+        .plant2-link:hover {
+            color: #007BFF; /* Change link color on hover */
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+        /* Hide the navbar by default */
+        #navbar {
+            display: none;
+        }
+    </style>
+</body>
+
+</html>
